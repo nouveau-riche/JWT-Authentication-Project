@@ -2,6 +2,7 @@ package com.example.JWT.Authentication.Project.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -38,6 +39,26 @@ public class GlobalExceptionHandler {
         });
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, Object>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        String description;
+        String[] parts = ex.getLocalizedMessage().split(":");
+
+        if (parts.length != 0) {
+            description = parts[0];
+        } else {
+            description = "Unable to read http message";
+        }
+
+        response.put("status", false);
+        response.put("description", description);
+
+        return ResponseEntity.badRequest().body(response);
     }
 
 }

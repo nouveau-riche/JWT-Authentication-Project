@@ -42,15 +42,14 @@ public class UserAuthenticationController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody UserEntity userEntity) {
-
         try {
             Map<String, Object> response;
 
             response = userServices.createUser(userEntity);
 
             if (response.get("status").equals(true)) {
-//                String jwtToken = authenticateAndGenerateJwt(userEntity);
-//                response.put("token", jwtToken);
+                String jwtToken = authenticateAndGenerateJwtAtSignup(userEntity);
+                response.put("token", jwtToken);
                 return new ResponseEntity<>(response, HttpStatus.CREATED);
             } else {
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
@@ -75,7 +74,7 @@ public class UserAuthenticationController {
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
 
-            String jwtToken = authenticateAndGenerateJwt(userEntity);
+            String jwtToken = authenticateAndGenerateJwtAtLogin(userEntity);
 
             response.put("description", "Login successfully");
             response.put("token", jwtToken);
@@ -92,7 +91,7 @@ public class UserAuthenticationController {
 
     }
 
-    private String authenticateAndGenerateJwt(UserEntity userEntity) {
+    private String authenticateAndGenerateJwtAtLogin(UserEntity userEntity) {
 
         try {
             Authentication authentication;
@@ -103,8 +102,21 @@ public class UserAuthenticationController {
             return jwtUtils.generateTokenFromUsername(userDetails);
 
         } catch (Exception e) {
-            System.out.println("nikunj error in jwt");
-            System.out.println(e);
+            System.out.println("login error in jwt");
+            System.out.println(e.toString());
+            return null;
+        }
+
+    }
+
+    private String authenticateAndGenerateJwtAtSignup(UserEntity userEntity) {
+
+        try {
+            UserDetails userDetails = userDetailService.loadUserForSignup(userEntity);
+            return jwtUtils.generateTokenFromUsername(userDetails);
+        } catch (Exception e) {
+            System.out.println("signup error in jwt");
+            System.out.println(e.toString());
             return null;
         }
 
