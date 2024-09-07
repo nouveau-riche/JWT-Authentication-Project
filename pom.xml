@@ -27,7 +27,7 @@
 		<url/>
 	</scm>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>8</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -98,8 +98,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.0</version>
 				<configuration>
-					<source>11</source>  <!-- same as <java.version> -->
-					<target>11</target>    <!-- same as <java.version> -->
+					<source>8</source>  <!-- same as <java.version> -->
+					<target>8</target>    <!-- same as <java.version> -->
 				</configuration>
 			</plugin>
 		</plugins>
